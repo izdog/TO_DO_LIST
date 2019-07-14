@@ -1,50 +1,29 @@
 const boxes = document.querySelectorAll('.box')
-const peoples = [
-    {
-        id: 1,
-        name: 'Brigitte',
-        avatar: 'https://i.pravatar.cc/150?img=15'
-    },
-    {
-        id: 2,
-        name: 'Marcel',
-        avatar: 'https://i.pravatar.cc/150?img=3'
-    },
-    {
-        id: 3,
-        name: 'Bernadette',
-        avatar: 'https://i.pravatar.cc/150?img=22'
-    },
-    {
-        id: 4,
-        name: 'Ernest',
-        avatar: 'https://i.pravatar.cc/150?img=18'
-    }
-]
 const submit = document.getElementById('submit')
-
+const items = document.querySelectorAll('.list-item')
 
 
 submit.addEventListener('click', e => {
     e.preventDefault()
-    eraseErrors()
-    
-    const radioValue = getRadioChecked()
-    const option = getOptionSelected()
+    const type = getRadioChecked()
+    const id = parseInt(getOptionSelected())
     const content = getContent()
 
-    const formData = new Data(content, radioValue, option)
+    const task = new Task(content, type, id)
 
-    if(formData.errors.length > 0){
-        formData.errors.forEach( error => {
+    task.valideData()
+
+    if(task.errors.length > 0){
+        task.errors.forEach( error => {
             error.displayError()
         })
     } else {
-        displayListItem(option, radioValue, content, peoples)
+        task.displayItem()
+        displayModal('La tâche a bien été ajoutée')
+        resetForm()
     }
 
 })
-
 
 const getRadioChecked = () => {
     const radio = document.querySelector('input[name="type"]:checked')
@@ -76,44 +55,8 @@ const getContent = () => {
     return content
 }
 
-const createListItem = (id, type, content, peoples) => {
-    const person = peoples.find(people => people.id === id)
-    console.log(person)
-    const span = createClose()
-    let listItem = document.createElement('div')
-    let avatar = document.createElement('img')
-    let task = document.createElement('div')
-    
-    listItem.classList.add('list-item', type)
-    avatar.src = person.avatar
-    avatar.alt = 'People'
-    task.innerHTML = `<p>${content}</p>`
-
-    listItem.append(avatar)
-    listItem.append(task)
-    listItem.append(span)
-
-    return listItem
-}
-
-const displayListItem = (id, type, content, peoples ) => {
-    const listContainer = document.getElementById('list--container')
-    const listItem = createListItem(id, type, content, peoples)
-    
-    listContainer.append(listItem)
-}
-
-const createClose = () => {
-    let span = document.createElement('span')
-    span.classList.add('list-close')
-    span.innerHTML = `<i class="large" material-icons">close</i>`
-
-    return span
-}
-
 const eraseErrors = () => {
     const errors = document.querySelectorAll('.form-error')
-    console.log(errors)
     if(errors.length > 0){
         errors.forEach(error => error.remove())
     }
@@ -138,18 +81,41 @@ const displayModal = content => {
 
     setTimeout(() => {
         modal.classList.remove('show')
-    }, 2000)
+    }, 1500)
 
     setTimeout(() => {
         modal.remove()
-    }, 3000)   
+    }, 2500)   
 }
 
-function Data(content, type, person){
+function Task(content, type, id){
+    this.persons = [
+        {
+            id: 1,
+            name: 'Brigitte',
+            avatar: 'https://i.pravatar.cc/150?img=15'
+        },
+        {
+            id: 2,
+            name: 'Marcel',
+            avatar: 'https://i.pravatar.cc/150?img=3'
+        },
+        {
+            id: 3,
+            name: 'Bernadette',
+            avatar: 'https://i.pravatar.cc/150?img=22'
+        },
+        {
+            id: 4,
+            name: 'Ernest',
+            avatar: 'https://i.pravatar.cc/150?img=18'
+        }
+    ]
     this.content = content
     this.type = type
-    this.person = person
+    this.id = id
     this.errors = []
+    this.item
 
     this.valideData = () => {
         if(!this.content){
@@ -160,15 +126,53 @@ function Data(content, type, person){
             this.errors.push(new Error('You must pick a type', 'form-radio'))
         }
 
-        if(!this.person){
+        if(!this.id){
             this.errors.push(new Error('You must pick a person', 'person'))
         }
 
-        if(this.errors.lenght > 0){
-            this.displayErrors()
-        }
-
         return false
+    }
+
+    this.displayItem = () => {
+        const listContainer = document.getElementById('list--container')
+        const listItem = this.createItem()
+    
+        listContainer.append(listItem)
+    }
+
+    this.createItem = () => {
+        const person = this.persons.find(person => person.id === this.id)
+        console.log(person)
+        this.item = document.createElement('div')
+        let avatar = document.createElement('img')
+        let task = document.createElement('div')
+        let span = document.createElement('span')
+
+        span.classList.add('list-close')
+        span.innerHTML = `<i class="large material-icons">close</i>`
+
+        this.item.classList.add('list-item', this.type)
+
+        avatar.src = person.avatar
+        avatar.alt = 'People'
+
+        task.innerHTML = `<p>${this.content}</p>`
+
+        this.item.append(avatar)
+        this.item.append(task)
+        this.item.append(span)
+
+        this.item.addEventListener('click', this.removeItem)
+
+        return this.item
+    }
+
+    this.removeItem = () => {
+        displayModal('La tâche a bien été supprimé')
+        this.item.setAttribute('data-remove', 'remove')
+        setTimeout(() => {
+            this.item.remove()
+        }, 350);
     }
 
 }
@@ -178,22 +182,31 @@ function Error(content, input){
     this.input = input
 
     this.displayError = () => {
+        console.log('trigger')
         const getElement = document.getElementById(this.input)
         const errorContent = `<p class="form-error">${this.content}</p>`
         getElement.insertAdjacentHTML('afterend', errorContent)
     }
 }
-// const removeElement = (box) => {
-//     console.log(box)
-//     box.setAttribute('data-show', '')
-//     setTimeout(() => {
-//         box.remove()
-//     }, 350);
-// }
 
+const removeItem = item => {
+    item.setAttribute('data-remove', 'remove')
+    setTimeout(() => {
+        item.remove()
+    }, 350);
+}
 
-// boxes.forEach( box => {
-//     box.addEventListener('click', removeElement.bind(this, box))
-// })
+const resetForm = () => {
+    const select = document.getElementById('person')
+    document.getElementById('content').value = ''
+    document.querySelector('input[name="type"]:checked').removeAttribute('checked')
+    select.options[select.selectedIndex].removeAttribute('selected')
+
+}
+
+items.forEach(item => {
+    item.addEventListener('click', removeItem.bind(this, item))
+})
+
 
 
