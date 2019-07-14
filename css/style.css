@@ -181,3 +181,38 @@ button:hover {
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    top: 0;
+    width: 35vw;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.3);
+    transition-delay: 300ms;
+    transition-property: top;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transform: translate(-50%, -100%);
+}
+
+.modal.show {
+    top: 20vh;
+    transition-delay: 300ms;
+    transition-property: top;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+}
+
+.modal-content {
+    padding: 1em;
+    background-color: #87D48D;
+    color: #1A476E;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+.modal-content p {
+    padding: 0;
+    margin: 0;
+}

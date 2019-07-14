@@ -22,7 +22,7 @@ const peoples = [
     }
 ]
 const submit = document.getElementById('submit')
-const listContainer = document.getElementById('list--container')
+
 
 
 submit.addEventListener('click', e => {
@@ -35,12 +35,14 @@ submit.addEventListener('click', e => {
 
     const formData = new Data(content, radioValue, option)
 
-    console.log(formData.valideData(), formData)
     if(formData.errors.length > 0){
         formData.errors.forEach( error => {
             error.displayError()
         })
+    } else {
+        displayListItem(option, radioValue, content, peoples)
     }
+
 })
 
 
@@ -74,14 +76,15 @@ const getContent = () => {
     return content
 }
 
-const createListItem = (id, type, content) => {
+const createListItem = (id, type, content, peoples) => {
     const person = peoples.find(people => people.id === id)
+    console.log(person)
     const span = createClose()
     let listItem = document.createElement('div')
     let avatar = document.createElement('img')
     let task = document.createElement('div')
     
-    listItem.classList.add('list-item', content)
+    listItem.classList.add('list-item', type)
     avatar.src = person.avatar
     avatar.alt = 'People'
     task.innerHTML = `<p>${content}</p>`
@@ -93,6 +96,12 @@ const createListItem = (id, type, content) => {
     return listItem
 }
 
+const displayListItem = (id, type, content, peoples ) => {
+    const listContainer = document.getElementById('list--container')
+    const listItem = createListItem(id, type, content, peoples)
+    
+    listContainer.append(listItem)
+}
 
 const createClose = () => {
     let span = document.createElement('span')
@@ -110,6 +119,32 @@ const eraseErrors = () => {
     }
 }
 
+const displayModal = content => {
+    const body = document.querySelector('body')
+    let modal = document.createElement('div')
+    let modalContent = document.createElement('div')
+
+    modal.classList.add('modal')
+    modalContent.classList.add('modal-content')
+
+    modalContent.innerHTML = `<p>${content}</p>`
+
+    modal.append(modalContent)
+    body.append(modal)
+
+    setTimeout(() => {
+        modal.classList.add('show')
+    })
+
+    setTimeout(() => {
+        modal.classList.remove('show')
+    }, 2000)
+
+    setTimeout(() => {
+        modal.remove()
+    }, 3000)   
+}
+
 function Data(content, type, person){
     this.content = content
     this.type = type
@@ -118,15 +153,15 @@ function Data(content, type, person){
 
     this.valideData = () => {
         if(!this.content){
-            this.errors.push(new Error('Field is missing', 'content'))
+            this.errors.push(new Error('Content field is missing', 'content'))
         }
 
         if(!this.type){
-            this.errors.push(new Error('Pick a type', 'form-radio'))
+            this.errors.push(new Error('You must pick a type', 'form-radio'))
         }
 
         if(!this.person){
-            this.errors.push(new Error('Pick a person', 'person'))
+            this.errors.push(new Error('You must pick a person', 'person'))
         }
 
         if(this.errors.lenght > 0){
