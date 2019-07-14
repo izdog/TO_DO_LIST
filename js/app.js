@@ -190,6 +190,7 @@ function Error(content, input){
 }
 
 const removeItem = item => {
+    displayModal('La tâche a bien été supprimée')
     item.setAttribute('data-remove', 'remove')
     setTimeout(() => {
         item.remove()
