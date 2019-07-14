@@ -229,7 +229,6 @@ button:hover {
     width: 35vw;
     overflow: auto;
     background-color: rgba(0,0,0,0.3);
-    transition-delay: 300ms;
     transition-property: top;
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;
@@ -238,7 +237,6 @@ button:hover {
 
 .modal.show {
     top: 20vh;
-    transition-delay: 300ms;
     transition-property: top;
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;

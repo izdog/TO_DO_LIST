@@ -77,15 +77,14 @@ const displayModal = content => {
 
     setTimeout(() => {
         modal.classList.add('show')
+        setTimeout(() => {
+            modal.classList.remove('show')
+            setTimeout(() => {
+                modal.remove()
+            }, 2500)   
+        }, 1500)
     })
 
-    setTimeout(() => {
-        modal.classList.remove('show')
-    }, 1500)
-
-    setTimeout(() => {
-        modal.remove()
-    }, 2500)   
 }
 
 function Task(content, type, id){
