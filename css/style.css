@@ -147,6 +147,14 @@ form {
     justify-content: center;
 }
 
+p.form-error {
+    padding: 0;
+    margin: 0 0 15px 0;
+    color: #92A0AD;
+    font-style: italic;
+    text-align: center;
+}
+
 label {
     font-size: 1.2em;
     font-weight: 700;

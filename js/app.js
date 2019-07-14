@@ -27,6 +27,8 @@ const listContainer = document.getElementById('list--container')
 
 submit.addEventListener('click', e => {
     e.preventDefault()
+    eraseErrors()
+    
     const radioValue = getRadioChecked()
     const option = getOptionSelected()
     const content = getContent()
@@ -34,6 +36,11 @@ submit.addEventListener('click', e => {
     const formData = new Data(content, radioValue, option)
 
     console.log(formData.valideData(), formData)
+    if(formData.errors.length > 0){
+        formData.errors.forEach( error => {
+            error.displayError()
+        })
+    }
 })
 
 
@@ -95,8 +102,12 @@ const createClose = () => {
     return span
 }
 
-const validateForm = data => {
-
+const eraseErrors = () => {
+    const errors = document.querySelectorAll('.form-error')
+    console.log(errors)
+    if(errors.length > 0){
+        errors.forEach(error => error.remove())
+    }
 }
 
 function Data(content, type, person){
@@ -125,19 +136,17 @@ function Data(content, type, person){
         return false
     }
 
-    this.displayErrors = () => {
-        console.log('tig')
-        this.errors.foreach( error => {
-            const getElement = document.getElementById(error.input)
-            const errorContent = `<p>${error.content}</p>`
-            getElement.insertAdjacentHTML('afterend', errorContent)
-        })
-    }
 }
 
 function Error(content, input){
     this.content = content
-    this.input = input 
+    this.input = input
+
+    this.displayError = () => {
+        const getElement = document.getElementById(this.input)
+        const errorContent = `<p class="form-error">${this.content}</p>`
+        getElement.insertAdjacentHTML('afterend', errorContent)
+    }
 }
 // const removeElement = (box) => {
 //     console.log(box)
